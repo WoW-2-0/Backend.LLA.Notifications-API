@@ -1,6 +1,6 @@
 ﻿namespace Sms.Infrastructure.Domain.Common.Exceptions;
 
-public class ActionResult<T>
+public class FuncResult<T>
 {
     public T Data { get; init; }
 
@@ -8,7 +8,7 @@ public class ActionResult<T>
 
     public bool IsSuccess => Exception is null;
 
-    public ActionResult(T data) => Data = data;
+    public FuncResult(T data) => Data = data;
 
-    public ActionResult(Exception exception) => Exception = exception;
+    public FuncResult(Exception exception) => Exception = exception;
 }

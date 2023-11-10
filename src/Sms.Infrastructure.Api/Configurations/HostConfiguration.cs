@@ -1,11 +1,11 @@
-﻿namespace Identity.Local.Infrastructure.Api.Configurations;
+﻿namespace Sms.Infrastructure.Api.Configurations;
 
 public static partial class HostConfiguration
 {
     public static ValueTask<WebApplicationBuilder> ConfigureAsync(this WebApplicationBuilder builder)
     {
         builder
-            .AddIdentityInfrastructure()
+            .AddNotificationInfrastructure()
             .AddExposers();
 
         return new(builder);

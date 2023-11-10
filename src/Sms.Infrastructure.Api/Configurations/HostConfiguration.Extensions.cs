@@ -1,31 +1,25 @@
-﻿using Identity.Local.Infrastructure.Application.Common.Identity.Services;
-using Identity.Local.Infrastructure.Infrastructure.Common.Identity.Services;
-using Identity.Local.Infrastructure.Persistence.DataContexts;
-using Identity.Local.Infrastructure.Persistence.Repositories;
-using Identity.Local.Infrastructure.Persistence.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Sms.Infrastructure.Application.Common.Notifications.Brokers;
+using Sms.Infrastructure.Application.Common.Notifications.Services;
+using Sms.Infrastructure.Infrastructure.Common.Notifications.Services;
 
-namespace Identity.Local.Infrastructure.Api.Configurations;
+namespace Sms.Infrastructure.Api.Configurations;
 
 public static partial class HostConfiguration
 {
-    private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder AddNotificationInfrastructure(this WebApplicationBuilder builder)
     {
-        // register db contexts
-        builder.Services.AddDbContext<IdentityDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        // register brokers
+        builder.Services.AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>();
 
-        // register repositories
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        // register data access foundation services
 
         // register helper foundation services
-        builder.Services.AddTransient<IPasswordGeneratorService, PasswordGeneratorService>();
-
-        // register foundation data access services
-        builder.Services.AddScoped<IUserService, UserService>();
-
-        // register other services
-        builder.Services.AddScoped<IAuthAggregationService, AuthAggregationService>();
+        builder.Services.AddScoped<ISmsSenderService, SmsSenderService>();
+        
+        // register orchestration and aggregation services
+        builder.Services
+            .AddScoped<ISmsOrchestrationService, SmsOrchestrationService>()
+            .AddScoped<INotificationAggregatorService, NotificationAggregatorService>();
 
         return builder;
     }

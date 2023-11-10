@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Sms.Infrastructure.Domain\Sms.Infrastructure.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

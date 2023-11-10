@@ -1,4 +1,4 @@
-﻿namespace Sms.Infrastructure.Application.Common.Notifications.Services;
+﻿namespace Sms.Infrastructure.Application.Common.Notifications.Brokers;
 
 public interface ISmsSenderBroker
 {
