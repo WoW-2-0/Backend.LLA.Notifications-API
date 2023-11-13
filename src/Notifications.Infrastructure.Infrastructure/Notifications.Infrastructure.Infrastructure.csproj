@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Notifications.Infrastructure.Infrastrucutre</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Notifications.Infrastructure.Application\Notifications.Infrastructure.Application.csproj" />
+      <ProjectReference Include="..\Notifications.Infrastructure.Persistence\Notifications.Infrastructure.Persistence.csproj" />
+    </ItemGroup>
+
+</Project>
