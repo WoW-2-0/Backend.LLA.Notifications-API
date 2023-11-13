@@ -9,7 +9,7 @@ public abstract class EntityRepositoryBase<TEntity, TContext> where TEntity : cl
     protected TContext DbContext => (TContext)_dbContext;
     private readonly DbContext _dbContext;
 
-    protected EntityRepositoryBase(DbContext dbContext)
+    protected EntityRepositoryBase(TContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -65,6 +65,8 @@ public abstract class EntityRepositoryBase<TEntity, TContext> where TEntity : cl
         CancellationToken cancellationToken = default
     )
     {
+        entity.Id = Guid.Empty;
+        
         await DbContext.Set<TEntity>().AddAsync(entity, cancellationToken);
 
         if (saveChanges)

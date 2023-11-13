@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Notifications.Infrastructure.Domain\Notifications.Infrastructure.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Common\Querying\" />
+    </ItemGroup>
+
 </Project>

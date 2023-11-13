@@ -1,4 +1,4 @@
-﻿namespace Sms.Infrastructure.Application.Common.Notifications.Models;
+﻿namespace Notifications.Infrastructure.Application.Common.Notifications.Models;
 
 public class NotificationResult
 {

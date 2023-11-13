@@ -21,9 +21,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Notifications.Infrastructure.Domain\Notifications.Infrastructure.Domain.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Repositories\Interfaces\" />
-    </ItemGroup>
     
 </Project>

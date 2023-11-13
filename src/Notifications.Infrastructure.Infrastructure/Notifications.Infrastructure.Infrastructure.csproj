@@ -12,4 +12,13 @@
       <ProjectReference Include="..\Notifications.Infrastructure.Persistence\Notifications.Infrastructure.Persistence.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="11.8.0" />
+        <PackageReference Include="Twilio" Version="7.0.0-rc.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\Mappers\" />
+    </ItemGroup>
+
 </Project>
