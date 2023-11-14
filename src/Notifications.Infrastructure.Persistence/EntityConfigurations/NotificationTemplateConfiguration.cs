@@ -11,7 +11,9 @@ public class NotificationTemplateConfiguration : IEntityTypeConfiguration<Notifi
     {
         builder.Property(template => template.Content).HasMaxLength(129_536);
 
-        builder.HasDiscriminator(emailTemplate => emailTemplate.Type)
+        builder
+            .ToTable("NotificationTemplates")
+            .HasDiscriminator(emailTemplate => emailTemplate.Type)
             .HasValue<EmailTemplate>(NotificationType.Email)
             .HasValue<SmsTemplate>(NotificationType.Sms);
     }

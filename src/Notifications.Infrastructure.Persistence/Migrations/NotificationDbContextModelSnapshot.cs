@@ -44,7 +44,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationHistory");
+                    b.ToTable("NotificationHistories", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 
@@ -67,7 +67,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationTemplate");
+                    b.ToTable("NotificationTemplates", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 

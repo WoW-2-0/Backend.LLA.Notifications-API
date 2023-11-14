@@ -6,19 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNotificationHistoryAndRelations : Migration
+    public partial class AddNotificationHistoryAndRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_NotificationTemplate",
+                table: "NotificationTemplate");
+
+            migrationBuilder.RenameTable(
+                name: "NotificationTemplate",
+                newName: "NotificationTemplates");
+
             migrationBuilder.RenameColumn(
                 name: "NotificationType",
-                table: "NotificationTemplate",
+                table: "NotificationTemplates",
                 newName: "Type");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Subject",
-                table: "NotificationTemplate",
+                table: "NotificationTemplates",
                 type: "character varying(256)",
                 maxLength: 256,
                 nullable: true,
@@ -28,15 +36,20 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
             migrationBuilder.AlterColumn<string>(
                 name: "Content",
-                table: "NotificationTemplate",
+                table: "NotificationTemplates",
                 type: "character varying(129536)",
                 maxLength: 129536,
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "text");
 
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_NotificationTemplates",
+                table: "NotificationTemplates",
+                column: "Id");
+
             migrationBuilder.CreateTable(
-                name: "NotificationHistory",
+                name: "NotificationHistories",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -52,7 +65,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NotificationHistory", x => x.Id);
+                    table.PrimaryKey("PK_NotificationHistories", x => x.Id);
                 });
         }
 
@@ -60,7 +73,15 @@ namespace Notifications.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NotificationHistory");
+                name: "NotificationHistories");
+
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_NotificationTemplates",
+                table: "NotificationTemplates");
+
+            migrationBuilder.RenameTable(
+                name: "NotificationTemplates",
+                newName: "NotificationTemplate");
 
             migrationBuilder.RenameColumn(
                 name: "Type",
@@ -85,6 +106,11 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(129536)",
                 oldMaxLength: 129536);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_NotificationTemplate",
+                table: "NotificationTemplate",
+                column: "Id");
         }
     }
 }

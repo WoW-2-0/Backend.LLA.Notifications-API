@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231114013020_AddNotificationHistoryAndRelations")]
-    partial class AddNotificationHistoryAndRelations
+    [Migration("20231114014712_AddNotificationHistoryAndRelation")]
+    partial class AddNotificationHistoryAndRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationHistory");
+                    b.ToTable("NotificationHistories", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 
@@ -70,7 +70,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationTemplate");
+                    b.ToTable("NotificationTemplates", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 

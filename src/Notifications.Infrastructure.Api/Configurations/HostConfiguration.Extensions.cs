@@ -13,7 +13,6 @@ namespace Notifications.Infrastructure.Api.Configurations;
 
 public static partial class HostConfiguration
 {
-
     private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
     {
         var assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(Assembly.Load).ToList();
@@ -31,17 +30,18 @@ public static partial class HostConfiguration
             options.UseNpgsql(builder.Configuration.GetConnectionString("NotificationsDatabaseConnection")));
 
         builder.Services
+            .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>()
             .AddScoped<ISmsTemplateRepository, SmsTemplateRepository>()
-            .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
-        
+            .AddScoped<IEmailHistoryRepository, EmailHistoryRepository>()
+            .AddScoped<ISmsHistoryRepository, SmsHistoryRepository>();
+
         // register brokers
         builder.Services.AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>();
 
         // register data access foundation services
-        builder.Services
-            .AddScoped<ISmsTemplateService, SmsTemplateService>()
+        builder.Services.AddScoped<ISmsTemplateService, SmsTemplateService>()
             .AddScoped<IEmailTemplateService, EmailTemplateService>();
-        
+
         // register helper foundation services
         builder.Services.AddScoped<ISmsSenderService, SmsSenderService>();
 
