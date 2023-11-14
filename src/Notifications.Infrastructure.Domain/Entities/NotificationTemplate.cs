@@ -10,4 +10,6 @@ public abstract class NotificationTemplate : IEntity
     public string Content { get; set; } = default!;
 
     public NotificationType Type { get; set; }
+
+    public IList<NotificationHistory> Histories { get; set; } = new List<NotificationHistory>();
 }

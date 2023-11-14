@@ -6,6 +6,8 @@ namespace Notifications.Infrastructure.Domain.Entities;
 public abstract class NotificationHistory : IEntity
 {
     public Guid Id { get; set; }
+    
+    public Guid TemplateId { get; set; }
 
     public Guid SenderUserId { get; set; }
 
@@ -14,4 +16,6 @@ public abstract class NotificationHistory : IEntity
     public NotificationType Type { get; set; }
 
     public string Content { get; set; } = default!;
+
+    public NotificationTemplate Template { get; set; }
 }
