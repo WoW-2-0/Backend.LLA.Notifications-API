@@ -1,19 +1,18 @@
-﻿using System.Linq.Expressions;
-using Notifications.Infrastructure.Application.Common.Models.Querying;
+﻿using Notifications.Infrastructure.Application.Common.Models.Querying;
 using Notifications.Infrastructure.Domain.Entities;
 
 namespace Notifications.Infrastructure.Application.Common.Notifications.Services;
 
-public interface ISmsTemplateService
+public interface ISmsHistoryService
 {
-    ValueTask<IList<SmsTemplate>> GetByFilterAsync(
+    ValueTask<IList<SmsHistory>> GetByFilterAsync(
         FilterPagination paginationOptions,
         bool asNoTracking = false,
         CancellationToken cancellationToken = default
     );
 
-    ValueTask<SmsTemplate> CreateAsync(
-        SmsTemplate smsTemplate,
+    ValueTask<SmsHistory> CreateAsync(
+        SmsHistory smsTemplate,
         bool saveChanges = true,
         CancellationToken cancellationToken = default
     );

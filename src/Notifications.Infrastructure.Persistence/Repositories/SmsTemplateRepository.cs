@@ -18,9 +18,9 @@ public class SmsTemplateRepository : EntityRepositoryBase<SmsTemplate, Notificat
         base.Get(predicate, asNoTracking);
 
     public ValueTask<SmsTemplate> CreateAsync(
-        SmsTemplate emailTemplate,
+        SmsTemplate smsTemplate,
         bool saveChanges = true,
         CancellationToken cancellationToken = default
     ) =>
-        base.CreateAsync(emailTemplate, saveChanges, cancellationToken);
+        base.CreateAsync(smsTemplate, saveChanges, cancellationToken);
 }

@@ -19,4 +19,20 @@ public static class ExceptionExtensions
 
         return result;
     }
+    
+    public static async ValueTask<FuncResult<T>> GetValueAsync<T>(this Func<ValueTask<T>> func) where T : struct
+    {
+        FuncResult<T> result;
+
+        try
+        {
+            result = new FuncResult<T>(await func());
+        }
+        catch (Exception e)
+        {
+            result = new FuncResult<T>(e);
+        }
+
+        return result;
+    }
 }

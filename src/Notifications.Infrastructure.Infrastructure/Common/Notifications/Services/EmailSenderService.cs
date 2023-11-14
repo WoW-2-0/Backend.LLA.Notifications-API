@@ -5,20 +5,20 @@ using Notifications.Infrastructure.Domain.Extensions;
 
 namespace Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
 
-public class SmsSenderService : ISmsSenderService
+public class EmailSenderService : IEmailSenderService
 {
-    private readonly IEnumerable<ISmsSenderBroker> _smsSenderBrokers;
+    private readonly IEnumerable<IEmailSenderBroker> _emailSenderBrokers;
 
-    public SmsSenderService(IEnumerable<ISmsSenderBroker> smsSenderBrokers)
+    public EmailSenderService(IEnumerable<IEmailSenderBroker> emailSenderBrokers)
     {
-        _smsSenderBrokers = smsSenderBrokers;
+        _emailSenderBrokers = emailSenderBrokers;
     }
 
-    public async ValueTask<bool> SendAsync(SmsMessage smsMessage, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> SendAsync(EmailMessage emailMessage, CancellationToken cancellationToken = default)
     {
-        foreach (var smsSenderBroker in _smsSenderBrokers)
+        foreach (var smsSenderBroker in _emailSenderBrokers)
         {
-            var sendNotificationTask = () => smsSenderBroker.SendAsync(smsMessage, cancellationToken);
+            var sendNotificationTask = () => smsSenderBroker.SendAsync(emailMessage, cancellationToken);
             var result = await sendNotificationTask.GetValueAsync();
 
             if (result.IsSuccess)
