@@ -10,7 +10,7 @@ public class TwilioSmsSenderBroker : ISmsSenderBroker
         string senderPhoneNumber,
         string receiverPhoneNumber,
         string message,
-        CancellationToken cancellationToken
+        CancellationToken cancellationToken = default
     )
     {
         var test = "ACe09f7247dfbdf25dbe2ef0acdf2279f9";
