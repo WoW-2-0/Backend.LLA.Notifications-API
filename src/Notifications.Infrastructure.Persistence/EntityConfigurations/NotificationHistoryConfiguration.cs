@@ -5,14 +5,15 @@ using Notifications.Infrastructure.Domain.Enums;
 
 namespace Notifications.Infrastructure.Persistence.EntityConfigurations;
 
-public class NotificationTemplateConfiguration : IEntityTypeConfiguration<NotificationTemplate>
+public class NotificationHistoryConfiguration : IEntityTypeConfiguration<NotificationHistory>
 {
-    public void Configure(EntityTypeBuilder<NotificationTemplate> builder)
+    public void Configure(EntityTypeBuilder<NotificationHistory> builder)
     {
         builder.Property(template => template.Content).HasMaxLength(129_536);
 
-        builder.HasDiscriminator(emailTemplate => emailTemplate.Type)
-            .HasValue<EmailTemplate>(NotificationType.Email)
-            .HasValue<SmsTemplate>(NotificationType.Sms);
+        builder
+            .HasDiscriminator(history => history.Type)
+            .HasValue<EmailHistory>(NotificationType.Email)
+            .HasValue<SmsHistory>(NotificationType.Sms);
     }
 }

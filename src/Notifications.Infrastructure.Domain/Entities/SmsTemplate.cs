@@ -6,6 +6,6 @@ public class SmsTemplate : NotificationTemplate
 {
     public SmsTemplate()
     {
-        NotificationType = Type.Sms;
+        Type = Type.Sms;
     }
 }

@@ -16,7 +16,7 @@ public class SmsTemplateValidator : AbstractValidator<SmsTemplate>
             .MaximumLength(256)
             .WithMessage("Sms template content must be at most 256 characters long");
 
-        RuleFor(template => template.NotificationType)
+        RuleFor(template => template.Type)
             .Equal(NotificationType.Sms)
             .WithMessage("Sms template notification type must be Sms");
     }
