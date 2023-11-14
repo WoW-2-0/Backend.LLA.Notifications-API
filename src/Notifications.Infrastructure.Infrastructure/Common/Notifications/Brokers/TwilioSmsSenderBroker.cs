@@ -1,4 +1,5 @@
 ﻿using Notifications.Infrastructure.Application.Common.Notifications.Brokers;
+using Notifications.Infrastructure.Application.Common.Notifications.Models;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -25,5 +26,10 @@ public class TwilioSmsSenderBroker : ISmsSenderBroker
         );
 
         return new ValueTask<bool>(true);
+    }
+
+    public ValueTask<bool> SendAsync(SmsMessage smsMessage, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

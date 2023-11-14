@@ -1,11 +1,8 @@
-﻿namespace Notifications.Infrastructure.Application.Common.Notifications.Brokers;
+﻿using Notifications.Infrastructure.Application.Common.Notifications.Models;
+
+namespace Notifications.Infrastructure.Application.Common.Notifications.Brokers;
 
 public interface ISmsSenderBroker
 {
-    ValueTask<bool> SendAsync(
-        string senderPhoneNumber,
-        string receiverPhoneNumber,
-        string message,
-        CancellationToken cancellationToken = default
-    );
+    ValueTask<bool> SendAsync(SmsMessage smsMessage, CancellationToken cancellationToken = default);
 }
