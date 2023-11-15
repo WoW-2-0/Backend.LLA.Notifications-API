@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231114070710_AddNotificationHistoryAndTemplateRelation")]
+    [Migration("20231115124814_AddNotificationHistoryAndTemplateRelation")]
     partial class AddNotificationHistoryAndTemplateRelation
     {
         /// <inheritdoc />
@@ -35,6 +35,12 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(129536)
                         .HasColumnType("character varying(129536)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsSuccessful")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ReceiverUserId")
                         .HasColumnType("uuid");
@@ -70,10 +76,16 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                         .HasMaxLength(129536)
                         .HasColumnType("character varying(129536)");
 
+                    b.Property<int>("TemplateType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateType")
+                        .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,13 +10,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "TemplateId",
-                table: "NotificationHistories",
-                type: "uuid",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
             migrationBuilder.CreateIndex(
                 name: "IX_NotificationHistories_TemplateId",
                 table: "NotificationHistories",
@@ -41,10 +33,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_NotificationHistories_TemplateId",
-                table: "NotificationHistories");
-
-            migrationBuilder.DropColumn(
-                name: "TemplateId",
                 table: "NotificationHistories");
         }
     }

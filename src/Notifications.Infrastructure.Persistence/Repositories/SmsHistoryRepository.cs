@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Notifications.Infrastructure.Domain.Entities;
 using Notifications.Infrastructure.Persistence.DataContexts;
 using Notifications.Infrastructure.Persistence.Repositories.Interfaces;
@@ -17,10 +18,20 @@ public class SmsHistoryRepository : EntityRepositoryBase<SmsHistory, Notificatio
     ) =>
         base.Get(predicate, asNoTracking);
 
-    public ValueTask<SmsHistory> CreateAsync(
+    public async ValueTask<SmsHistory> CreateAsync(
         SmsHistory smsHistory,
         bool saveChanges = true,
         CancellationToken cancellationToken = default
-    ) =>
-        base.CreateAsync(smsHistory, saveChanges, cancellationToken);
+    )
+    {
+        if (smsHistory.SmsTemplate is not null)
+            DbContext.Entry(smsHistory.SmsTemplate).State = EntityState.Unchanged;
+
+        var createdHistory = await base.CreateAsync(smsHistory, saveChanges, cancellationToken);
+
+        if (smsHistory.SmsTemplate is not null)
+            DbContext.Entry(smsHistory.SmsTemplate).State = EntityState.Detached;
+
+        return createdHistory;
+    }
 }

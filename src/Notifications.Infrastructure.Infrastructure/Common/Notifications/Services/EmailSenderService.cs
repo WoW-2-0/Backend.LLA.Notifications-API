@@ -21,8 +21,9 @@ public class EmailSenderService : IEmailSenderService
             var sendNotificationTask = () => smsSenderBroker.SendAsync(emailMessage, cancellationToken);
             var result = await sendNotificationTask.GetValueAsync();
 
-            if (result.IsSuccess)
-                return true;
+            emailMessage.IsSuccessful = result.IsSuccess;
+            emailMessage.ErrorMessage = result.Exception?.Message;
+            return result.IsSuccess;
         }
 
         return false;

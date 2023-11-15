@@ -9,6 +9,4 @@ public class SmtpEmailSenderSettings
     public string CredentialAddress { get; set; } = default!;
 
     public string Password { get; set; } = default!;
-
-    public string TestValue { get; set; } = string.Empty;
 }

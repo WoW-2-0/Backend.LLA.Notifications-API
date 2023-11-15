@@ -1,5 +1,6 @@
 ﻿using Sms.Infrastructure.Application.Common.Notifications.Brokers;
 using Sms.Infrastructure.Application.Common.Notifications.Services;
+using Sms.Infrastructure.Infrastructure.Common.Notifications.Brokers;
 using Sms.Infrastructure.Infrastructure.Common.Notifications.Services;
 
 namespace Sms.Infrastructure.Api.Configurations;

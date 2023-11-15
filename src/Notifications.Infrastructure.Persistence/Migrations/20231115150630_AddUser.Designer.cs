@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231114014712_AddNotificationHistoryAndRelation")]
-    partial class AddNotificationHistoryAndRelation
+    [Migration("20231115150630_AddUser")]
+    partial class AddUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,16 +36,27 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                         .HasMaxLength(129536)
                         .HasColumnType("character varying(129536)");
 
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsSuccessful")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid>("ReceiverUserId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("SenderUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateId");
 
                     b.ToTable("NotificationHistories", (string)null);
 
@@ -65,16 +76,45 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                         .HasMaxLength(129536)
                         .HasColumnType("character varying(129536)");
 
+                    b.Property<int>("TemplateType")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateType")
+                        .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.EmailHistory", b =>
@@ -133,6 +173,22 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.HasBaseType("Notifications.Infrastructure.Domain.Entities.NotificationTemplate");
 
                     b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationHistory", b =>
+                {
+                    b.HasOne("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", "Template")
+                        .WithMany("Histories")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", b =>
+                {
+                    b.Navigation("Histories");
                 });
 #pragma warning restore 612, 618
         }

@@ -17,9 +17,9 @@ public abstract class NotificationHistory : IEntity
 
     public string Content { get; set; } = default!;
 
-    public NotificationTemplate Template { get; set; }
-
     public bool IsSuccessful { get; set; }
 
     public string? ErrorMessage { get; set; }
+    
+    public NotificationTemplate Template { get; set; }
 }

@@ -52,7 +52,10 @@ public class SmsRenderingService : ISmsRenderingService
         var messageBuilder = new StringBuilder(smsMessage.Template.Content);
         templatePlaceholders.ForEach(placeholder => messageBuilder.Replace(placeholder.Placeholder, placeholder.Value));
 
-        return ValueTask.FromResult(messageBuilder.ToString());
+        var message = messageBuilder.ToString();
+        smsMessage.Message = message;
+        
+        return ValueTask.FromResult(message);
     }
 
     private void ValidatePlaceholders(IEnumerable<TemplatePlaceholder> templatePlaceholders)

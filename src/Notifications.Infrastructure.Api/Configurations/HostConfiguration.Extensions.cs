@@ -1,10 +1,13 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Notifications.Infrastructure.Application.Common.Identity.Services;
 using Notifications.Infrastructure.Application.Common.Notifications.Brokers;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
+using Notifications.Infrastructure.Infrastrucutre.Common.Identity.Services;
 using Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Brokers;
 using Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
+using Notifications.Infrastructure.Infrastrucutre.Common.Settings;
 using Notifications.Infrastructure.Persistence.DataContexts;
 using Notifications.Infrastructure.Persistence.Repositories;
 using Notifications.Infrastructure.Persistence.Repositories.Interfaces;
@@ -35,40 +38,57 @@ public static partial class HostConfiguration
         return builder;
     }
 
+    private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
+    {
+        // register configurations
+        builder.Services
+            .AddScoped<IUserRepository, UserRepository>()
+            .AddScoped<IUserSettingsRepository, UserSettingsRepository>();
+        
+        builder.Services
+            .AddScoped<IUserService, UserService>()
+            .AddScoped<IUserSettingsService, UserSettingsService>();
+
+        return builder;
+    }
+
     private static WebApplicationBuilder AddNotificationInfrastructure(this WebApplicationBuilder builder)
     {
-        // register persistence
+        // register configurations 
         builder.Services
-            .AddDbContext<NotificationDbContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("NotificationsDatabaseConnection")));
+            .Configure<TemplateRenderingSettings>(builder.Configuration.GetSection(nameof(TemplateRenderingSettings)))
+            .Configure<SmtpEmailSenderSettings>(builder.Configuration.GetSection(nameof(SmtpEmailSenderSettings)))
+            .Configure<TwilioSmsSenderSettings>(builder.Configuration.GetSection(nameof(TwilioSmsSenderSettings)))
+            .Configure<NotificationSettings>(builder.Configuration.GetSection(nameof(NotificationSettings)));
 
-        builder.Services
-            .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>()
+        // register persistence
+        builder.Services.AddDbContext<NotificationDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("NotificationsDatabaseConnection")));
+
+        builder.Services.AddScoped<IEmailTemplateRepository, EmailTemplateRepository>()
             .AddScoped<ISmsTemplateRepository, SmsTemplateRepository>()
             .AddScoped<IEmailHistoryRepository, EmailHistoryRepository>()
             .AddScoped<ISmsHistoryRepository, SmsHistoryRepository>();
 
         // register brokers
         builder.Services
-            .AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>();
+            .AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>()
+            .AddScoped<IEmailSenderBroker, SmtpEmailSenderBroker>();
 
         // register data access foundation services
-        builder.Services
-            .AddScoped<ISmsTemplateService, SmsTemplateService>()
+        builder.Services.AddScoped<ISmsTemplateService, SmsTemplateService>()
             .AddScoped<IEmailTemplateService, EmailTemplateService>()
             .AddScoped<IEmailHistoryService, EmailHistoryService>()
             .AddScoped<ISmsHistoryService, SmsHistoryService>();
 
         // register helper foundation services
-        builder.Services
-            .AddScoped<IEmailSenderService, EmailSenderService>()
+        builder.Services.AddScoped<IEmailSenderService, EmailSenderService>()
             .AddScoped<ISmsSenderService, SmsSenderService>()
             .AddScoped<IEmailRenderingService, EmailRenderingService>()
             .AddScoped<ISmsRenderingService, SmsRenderingService>();
 
         // register orchestration and aggregation services
-        builder.Services
-            .AddScoped<ISmsOrchestrationService, SmsOrchestrationService>()
+        builder.Services.AddScoped<ISmsOrchestrationService, SmsOrchestrationService>()
             .AddScoped<IEmailOrchestrationService, EmailOrchestrationService>()
             .AddScoped<INotificationAggregatorService, NotificationAggregatorService>();
 

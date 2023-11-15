@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Notifications.Infrastructure.Persistence.DataContexts;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    partial class NotificationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231115124641_AddNotificationHistoryAndMutualRelation")]
+    partial class AddNotificationHistoryAndMutualRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,12 +56,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverUserId");
-
-                    b.HasIndex("SenderUserId");
-
-                    b.HasIndex("TemplateId");
-
                     b.ToTable("NotificationHistories", (string)null);
 
                     b.HasDiscriminator<int>("Type");
@@ -85,50 +82,14 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TemplateType")
+                        .IsUnique();
+
                     b.ToTable("NotificationTemplates", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EmailAddress")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.UserSettings", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("PreferredNotificationType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserSettings");
                 });
 
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.EmailHistory", b =>
@@ -187,49 +148,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.HasBaseType("Notifications.Infrastructure.Domain.Entities.NotificationTemplate");
 
                     b.HasDiscriminator().HasValue(1);
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationHistory", b =>
-                {
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("ReceiverUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", "Template")
-                        .WithMany("Histories")
-                        .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Template");
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.UserSettings", b =>
-                {
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithOne("UserSettings")
-                        .HasForeignKey("Notifications.Infrastructure.Domain.Entities.UserSettings", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", b =>
-                {
-                    b.Navigation("Histories");
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.User", b =>
-                {
-                    b.Navigation("UserSettings")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231113152116_AddNotificationTemplate")]
-    partial class AddNotificationTemplate
+    [Migration("20231115124407_AddNotificationTemplateAndMutualRelation")]
+    partial class AddNotificationTemplateAndMutualRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,16 +33,23 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(129536)
+                        .HasColumnType("character varying(129536)");
 
-                    b.Property<int>("NotificationType")
+                    b.Property<int>("TemplateType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("NotificationTemplate");
+                    b.HasIndex("TemplateType")
+                        .IsUnique();
 
-                    b.HasDiscriminator<int>("NotificationType");
+                    b.ToTable("NotificationTemplates", (string)null);
+
+                    b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
                 });
@@ -53,7 +60,8 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("Subject")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasDiscriminator().HasValue(0);
                 });

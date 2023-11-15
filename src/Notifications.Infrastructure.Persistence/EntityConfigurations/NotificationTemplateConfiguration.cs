@@ -11,7 +11,7 @@ public class NotificationTemplateConfiguration : IEntityTypeConfiguration<Notifi
     {
         builder.Property(template => template.Content).HasMaxLength(129_536);
 
-        builder.HasIndex(template => template.TemplateType).IsUnique();
+        // builder.HasIndex(template => template.TemplateType).IsUnique();
 
         builder
             .ToTable("NotificationTemplates")

@@ -1,4 +1,5 @@
-﻿using Notifications.Infrastructure.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Notifications.Infrastructure.Domain.Enums;
 
 namespace Notifications.Infrastructure.Domain.Entities;
 
@@ -15,6 +16,10 @@ public class EmailHistory : NotificationHistory
 
     public string Subject { get; set; } = default!;
     
-    // TODO : check if that works
-    // public EmailTemplate EmailTemplate => Template as EmailTemplate;
+    [NotMapped]
+    public EmailTemplate EmailTemplate
+    {
+        get => Template is not null ? Template as EmailTemplate : null;
+        set => Template = value;
+    }
 }

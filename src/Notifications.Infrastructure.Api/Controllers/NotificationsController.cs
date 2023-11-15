@@ -21,7 +21,7 @@ public class NotificationsController : ControllerBase
     public async ValueTask<IActionResult> Send([FromBody] NotificationRequest request)
     {
         var result = await _notificationAggregatorService.SendAsync(request);
-        return result.IsSuccess ? Ok() : BadRequest();
+        return result.IsSuccess && (result?.Data ?? false) ? Ok() : BadRequest();
     }
 
     [HttpGet("templates")]

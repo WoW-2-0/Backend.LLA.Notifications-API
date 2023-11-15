@@ -53,7 +53,11 @@ public class EmailRenderingService : IEmailRenderingService
         var messageBuilder = new StringBuilder(emailMessage.Template.Content);
         templatePlaceholders.ForEach(placeholder => messageBuilder.Replace(placeholder.Placeholder, placeholder.Value));
 
-        return new ValueTask<string>(messageBuilder.ToString());
+        var message = messageBuilder.ToString();
+        emailMessage.Body = message;
+        emailMessage.Subject = emailMessage.Template.Subject;
+
+        return ValueTask.FromResult(message);
     }
 
     private void ValidatePlaceholders(IEnumerable<TemplatePlaceholder> templatePlaceholders)

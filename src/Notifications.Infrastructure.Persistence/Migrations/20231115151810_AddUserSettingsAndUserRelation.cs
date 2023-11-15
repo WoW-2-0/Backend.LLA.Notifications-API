@@ -6,23 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNotificationTemplate : Migration
+    public partial class AddUserSettingsAndUserRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "NotificationTemplate",
+                name: "UserSettings",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    NotificationType = table.Column<int>(type: "integer", nullable: false),
-                    Subject = table.Column<string>(type: "text", nullable: true)
+                    PreferredNotificationType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NotificationTemplate", x => x.Id);
+                    table.PrimaryKey("PK_UserSettings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSettings_Users_Id",
+                        column: x => x.Id,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
         }
 
@@ -30,7 +34,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NotificationTemplate");
+                name: "UserSettings");
         }
     }
 }
