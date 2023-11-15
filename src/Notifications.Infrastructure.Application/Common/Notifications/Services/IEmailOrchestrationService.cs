@@ -3,10 +3,10 @@ using Notifications.Infrastructure.Domain.Common.Exceptions;
 
 namespace Notifications.Infrastructure.Application.Common.Notifications.Services;
 
-public interface ISmsOrchestrationService
+public interface IEmailOrchestrationService
 {
     ValueTask<FuncResult<bool>> SendAsync(
-        SmsNotificationRequest request,
+        EmailNotificationRequest request,
         CancellationToken cancellationToken = default
     );
 }

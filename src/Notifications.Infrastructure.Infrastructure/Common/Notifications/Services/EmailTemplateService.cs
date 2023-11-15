@@ -5,6 +5,7 @@ using Notifications.Infrastructure.Application.Common.Models.Querying;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
 using Notifications.Infrastructure.Application.Common.Querying.Extensions;
 using Notifications.Infrastructure.Domain.Entities;
+using Notifications.Infrastructure.Domain.Enums;
 using Notifications.Infrastructure.Persistence.Repositories.Interfaces;
 
 namespace Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
@@ -37,6 +38,14 @@ public class EmailTemplateService : IEmailTemplateService
         await Get(asNoTracking: asNoTracking)
             .ApplyPagination(paginationOptions)
             .ToListAsync(cancellationToken: cancellationToken);
+
+    public async ValueTask<EmailTemplate?> GetByTypeAsync(
+        NotificationTemplateType templateType,
+        bool asNoTracking = false,
+        CancellationToken cancellationToken = default
+    ) =>
+        await _emailTemplateRepository.Get(template => template.TemplateType == templateType, asNoTracking)
+            .SingleOrDefaultAsync(cancellationToken);
 
     public ValueTask<EmailTemplate> CreateAsync(
         EmailTemplate emailTemplate,

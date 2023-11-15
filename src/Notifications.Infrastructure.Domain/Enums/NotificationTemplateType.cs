@@ -1,7 +1,9 @@
-﻿namespace Notifications.Infrastructure.Domain.Enums;
+﻿using System.ComponentModel;
+
+namespace Notifications.Infrastructure.Domain.Enums;
 
 public enum NotificationTemplateType
 {
-    SystemWelcomeNotification,
-    EmailVerificationNotification,
+    SystemWelcomeNotification = 0,
+    EmailVerificationNotification = 1,
 }

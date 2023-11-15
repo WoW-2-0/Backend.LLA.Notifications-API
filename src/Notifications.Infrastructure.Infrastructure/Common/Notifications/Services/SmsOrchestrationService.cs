@@ -1,93 +1,62 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using Notifications.Infrastructure.Application.Common.Enums;
+﻿using AutoMapper;
+using Notifications.Infrastructure.Application.Common.Notifications.Models;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
 using Notifications.Infrastructure.Domain.Common.Exceptions;
+using Notifications.Infrastructure.Domain.Entities;
 using Notifications.Infrastructure.Domain.Extensions;
 
 namespace Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
 
 public class SmsOrchestrationService : ISmsOrchestrationService
 {
+    private readonly IMapper _mapper;
     private readonly ISmsSenderService _smsSenderService;
+    private readonly ISmsHistoryService _smsHistoryService;
+    private readonly ISmsTemplateService _smsTemplateService;
+    private readonly ISmsRenderingService _smsRenderingService;
 
-    public SmsOrchestrationService(ISmsSenderService smsSenderService)
+    public SmsOrchestrationService(
+        IMapper mapper,
+        ISmsTemplateService smsTemplateService,
+        ISmsRenderingService smsRenderingService,
+        ISmsSenderService smsSenderService,
+        ISmsHistoryService smsHistoryService
+    )
     {
+        _mapper = mapper;
+        _smsTemplateService = smsTemplateService;
+        _smsRenderingService = smsRenderingService;
         _smsSenderService = smsSenderService;
+        _smsHistoryService = smsHistoryService;
     }
 
     public async ValueTask<FuncResult<bool>> SendAsync(
-        string senderPhoneNumber,
-        string receiverPhoneNumber,
-        NotificationTemplateType templateType,
-        Dictionary<string, string> variables,
+        SmsNotificationRequest request,
         CancellationToken cancellationToken = default
     )
     {
         // validate
 
-        var test = async () =>
+        var sendNotificationRequest = async () =>
         {
+            var message = _mapper.Map<SmsMessage>(request);
+
             // get template
+            message.Template = await _smsTemplateService.GetByTypeAsync(request.TemplateType, true, cancellationToken);
 
             // render template
+            await _smsRenderingService.RenderAsync(message, cancellationToken);
 
             // send message
-            var template = GetTemplate(templateType);
-
-
-            var message = GetMessage(template, variables);
-
-
-            await _smsSenderService.SendAsync(senderPhoneNumber, receiverPhoneNumber, message, cancellationToken);
-
-            return true;
+            await _smsSenderService.SendAsync(message, cancellationToken);
 
             // save history
+            var history = _mapper.Map<SmsHistory>(message);
+            await _smsHistoryService.CreateAsync(history, cancellationToken: cancellationToken);
+
+            return history.IsSuccessful;
         };
 
-        return await test.GetValueAsync();
-    }
-
-    public string GetTemplate(NotificationTemplateType templateType)
-    {
-        var template = templateType switch
-        {
-            NotificationTemplateType.SystemWelcomeNotification => "Welcome to the system, {{UserName}}",
-            NotificationTemplateType.EmailVerificationNotification => "Verify your email by clicking the link, {{VerificationLink}}",
-            _ => throw new ArgumentOutOfRangeException(nameof(templateType), "")
-        };
-
-        return template;
-    }
-
-    public string GetMessage(string template, Dictionary<string, string> variables)
-    {
-        // TODO : validate variables with messages
-
-        var messageBuilder = new StringBuilder(template);
-
-        var pattern = @"\{\{([^\{\}]+)\}\}";
-        var matchValuePattern = "{{(.*?)}}";
-        var matches = Regex.Matches(template, pattern)
-            .Select(match =>
-            {
-                var placeholder = match.Value;
-                var placeholderValue = Regex.Match(placeholder, matchValuePattern).Groups[1].Value;
-                var valid = variables.TryGetValue(placeholderValue, out var value);
-
-                return new
-                {
-                    Placeholder = placeholder,
-                    Value = value,
-                    IsValid = valid
-                };
-            });
-
-        foreach (var match in matches)
-            messageBuilder.Replace(match.Placeholder, match.Value);
-
-        var message = messageBuilder.ToString();
-        return message;
+        return await sendNotificationRequest.GetValueAsync();
     }
 }

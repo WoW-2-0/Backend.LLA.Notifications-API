@@ -1,5 +1,4 @@
 ﻿using Notifications.Infrastructure.Domain.Enums;
-using NotificationTemplateType = Notifications.Infrastructure.Application.Common.Enums.NotificationTemplateType;
 
 namespace Notifications.Infrastructure.Application.Common.Notifications.Models;
 

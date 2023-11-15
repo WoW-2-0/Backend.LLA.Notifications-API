@@ -21,8 +21,8 @@ public class SmsSenderService : ISmsSenderService
             var sendNotificationTask = () => smsSenderBroker.SendAsync(smsMessage, cancellationToken);
             var result = await sendNotificationTask.GetValueAsync();
 
-            if (result.IsSuccess)
-                return true;
+            // TODO : check later
+            return result.IsSuccess;
         }
 
         return false;

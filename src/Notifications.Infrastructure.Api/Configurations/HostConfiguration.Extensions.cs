@@ -13,12 +13,24 @@ namespace Notifications.Infrastructure.Api.Configurations;
 
 public static partial class HostConfiguration
 {
+    private static readonly ICollection<Assembly> Assemblies;
+
+    static HostConfiguration()
+    {
+        Assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(Assembly.Load).ToList();
+        Assemblies.Add(Assembly.GetExecutingAssembly());
+    }
+
     private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
     {
-        var assemblies = Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select(Assembly.Load).ToList();
-        assemblies.Add(Assembly.GetExecutingAssembly());
+        builder.Services.AddValidatorsFromAssemblies(Assemblies);
 
-        builder.Services.AddValidatorsFromAssemblies(assemblies);
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddMappers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAutoMapper(Assemblies);
 
         return builder;
     }
@@ -26,8 +38,9 @@ public static partial class HostConfiguration
     private static WebApplicationBuilder AddNotificationInfrastructure(this WebApplicationBuilder builder)
     {
         // register persistence
-        builder.Services.AddDbContext<NotificationDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("NotificationsDatabaseConnection")));
+        builder.Services
+            .AddDbContext<NotificationDbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("NotificationsDatabaseConnection")));
 
         builder.Services
             .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>()
@@ -36,17 +49,27 @@ public static partial class HostConfiguration
             .AddScoped<ISmsHistoryRepository, SmsHistoryRepository>();
 
         // register brokers
-        builder.Services.AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>();
+        builder.Services
+            .AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>();
 
         // register data access foundation services
-        builder.Services.AddScoped<ISmsTemplateService, SmsTemplateService>()
-            .AddScoped<IEmailTemplateService, EmailTemplateService>();
+        builder.Services
+            .AddScoped<ISmsTemplateService, SmsTemplateService>()
+            .AddScoped<IEmailTemplateService, EmailTemplateService>()
+            .AddScoped<IEmailHistoryService, EmailHistoryService>()
+            .AddScoped<ISmsHistoryService, SmsHistoryService>();
 
         // register helper foundation services
-        builder.Services.AddScoped<ISmsSenderService, SmsSenderService>();
+        builder.Services
+            .AddScoped<IEmailSenderService, EmailSenderService>()
+            .AddScoped<ISmsSenderService, SmsSenderService>()
+            .AddScoped<IEmailRenderingService, EmailRenderingService>()
+            .AddScoped<ISmsRenderingService, SmsRenderingService>();
 
         // register orchestration and aggregation services
-        builder.Services.AddScoped<ISmsOrchestrationService, SmsOrchestrationService>()
+        builder.Services
+            .AddScoped<ISmsOrchestrationService, SmsOrchestrationService>()
+            .AddScoped<IEmailOrchestrationService, EmailOrchestrationService>()
             .AddScoped<INotificationAggregatorService, NotificationAggregatorService>();
 
         return builder;

@@ -14,4 +14,7 @@ public class EmailHistory : NotificationHistory
     public string ReceiverEmailAddress { get; set; } = default!;
 
     public string Subject { get; set; } = default!;
+    
+    // TODO : check if that works
+    // public EmailTemplate EmailTemplate => Template as EmailTemplate;
 }
