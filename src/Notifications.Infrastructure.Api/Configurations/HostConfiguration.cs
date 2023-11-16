@@ -4,7 +4,8 @@ public static partial class HostConfiguration
 {
     public static ValueTask<WebApplicationBuilder> ConfigureAsync(this WebApplicationBuilder builder)
     {
-        builder.AddMappers()
+        builder
+            .AddMappers()
             .AddValidators()
             .AddIdentityInfrastructure()
             .AddNotificationInfrastructure()
@@ -14,10 +15,11 @@ public static partial class HostConfiguration
         return new(builder);
     }
 
-    public static ValueTask<WebApplication> ConfigureAsync(this WebApplication app)
+    public static async ValueTask<WebApplication> ConfigureAsync(this WebApplication app)
     {
+        await app.SeedDataAsync();
         app.UseExposers().UseDevTools();
 
-        return new(app);
+        return app;
     }
 }

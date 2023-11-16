@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Notifications.Infrastructure.Api.Data;
 using Notifications.Infrastructure.Application.Common.Identity.Services;
 using Notifications.Infrastructure.Application.Common.Notifications.Brokers;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
@@ -41,13 +42,10 @@ public static partial class HostConfiguration
     private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
     {
         // register configurations
-        builder.Services
-            .AddScoped<IUserRepository, UserRepository>()
+        builder.Services.AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IUserSettingsRepository, UserSettingsRepository>();
-        
-        builder.Services
-            .AddScoped<IUserService, UserService>()
-            .AddScoped<IUserSettingsService, UserSettingsService>();
+
+        builder.Services.AddScoped<IUserService, UserService>().AddScoped<IUserSettingsService, UserSettingsService>();
 
         return builder;
     }
@@ -71,8 +69,7 @@ public static partial class HostConfiguration
             .AddScoped<ISmsHistoryRepository, SmsHistoryRepository>();
 
         // register brokers
-        builder.Services
-            .AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>()
+        builder.Services.AddScoped<ISmsSenderBroker, TwilioSmsSenderBroker>()
             .AddScoped<IEmailSenderBroker, SmtpEmailSenderBroker>();
 
         // register data access foundation services
@@ -109,6 +106,15 @@ public static partial class HostConfiguration
         builder.Services.AddSwaggerGen();
 
         return builder;
+    }
+
+    private static async Task<WebApplication> SeedDataAsync(this WebApplication app)
+    {
+        await using var servicesScope = app.Services.CreateAsyncScope();
+        await servicesScope.ServiceProvider.InitializeSeedAsync(servicesScope.ServiceProvider
+            .GetRequiredService<IWebHostEnvironment>());
+        
+        return app;
     }
 
     private static WebApplication UseExposers(this WebApplication app)
