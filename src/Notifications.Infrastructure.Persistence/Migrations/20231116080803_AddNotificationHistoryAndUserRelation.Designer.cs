@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231115151810_AddUserSettingsAndUserRelation")]
-    partial class AddUserSettingsAndUserRelation
+    [Migration("20231116080803_AddNotificationHistoryAndUserRelation")]
+    partial class AddNotificationHistoryAndUserRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,10 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ReceiverUserId");
+
+                    b.HasIndex("SenderUserId");
+
                     b.HasIndex("TemplateId");
 
                     b.ToTable("NotificationHistories", (string)null);
@@ -84,7 +88,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TemplateType")
+                    b.HasIndex("Type", "TemplateType")
                         .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);
@@ -108,6 +112,9 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -122,7 +129,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("PreferredNotificationType")
+                    b.Property<int?>("PreferredNotificationType")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -190,6 +197,18 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationHistory", b =>
                 {
+                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiverUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("SenderUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", "Template")
                         .WithMany("Histories")
                         .HasForeignKey("TemplateId")

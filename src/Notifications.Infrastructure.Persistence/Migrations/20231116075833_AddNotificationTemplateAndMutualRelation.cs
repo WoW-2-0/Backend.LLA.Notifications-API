@@ -27,9 +27,9 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_NotificationTemplates_TemplateType",
+                name: "IX_NotificationTemplates_Type_TemplateType",
                 table: "NotificationTemplates",
-                column: "TemplateType",
+                columns: new[] { "Type", "TemplateType" },
                 unique: true);
         }
 

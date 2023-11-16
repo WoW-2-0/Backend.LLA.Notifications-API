@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231115124407_AddNotificationTemplateAndMutualRelation")]
+    [Migration("20231116075833_AddNotificationTemplateAndMutualRelation")]
     partial class AddNotificationTemplateAndMutualRelation
     {
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TemplateType")
+                    b.HasIndex("Type", "TemplateType")
                         .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);

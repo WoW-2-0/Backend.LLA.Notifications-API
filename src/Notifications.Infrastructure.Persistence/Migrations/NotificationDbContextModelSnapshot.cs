@@ -85,6 +85,9 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Type", "TemplateType")
+                        .IsUnique();
+
                     b.ToTable("NotificationTemplates", (string)null);
 
                     b.HasDiscriminator<int>("Type");

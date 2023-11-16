@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231115150630_AddUser")]
+    [Migration("20231116080640_AddUser")]
     partial class AddUser
     {
         /// <inheritdoc />
@@ -84,7 +84,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TemplateType")
+                    b.HasIndex("Type", "TemplateType")
                         .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);
@@ -107,6 +107,9 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserName")
                         .IsRequired()

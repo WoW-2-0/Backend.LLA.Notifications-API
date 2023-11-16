@@ -5,6 +5,7 @@ namespace Notifications.Infrastructure.Domain.Enums;
 public enum NotificationTemplateType
 {
     SystemWelcomeNotification = 0,
-    EmailVerificationNotification = 1,
-    ReferralNotification = 2,
+    EmailAddressVerificationNotification = 1,
+    PhoneNumberVerificationNotification = 2,
+    ReferralNotification = 3,
 }

@@ -5,7 +5,7 @@
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNotificationHistoryAndTemplateRelation : Migration
+    public partial class AddNotificationHistoryAndNotificationTemplateRelation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

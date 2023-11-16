@@ -21,7 +21,7 @@ public class NotificationHistoryConfiguration : IEntityTypeConfiguration<Notific
             .HasForeignKey(history => history.TemplateId);
 
         builder.HasOne<User>().WithMany().HasForeignKey(history => history.SenderUserId);
-
+        
         builder.HasOne<User>().WithMany().HasForeignKey(history => history.ReceiverUserId);
     }
 }

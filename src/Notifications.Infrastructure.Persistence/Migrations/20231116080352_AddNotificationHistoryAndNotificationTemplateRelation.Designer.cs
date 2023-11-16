@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Notifications.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotificationDbContext))]
-    [Migration("20231115152249_AddUserAndNotificationHistoryRelation")]
-    partial class AddUserAndNotificationHistoryRelation
+    [Migration("20231116080352_AddNotificationHistoryAndNotificationTemplateRelation")]
+    partial class AddNotificationHistoryAndNotificationTemplateRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,10 +56,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverUserId");
-
-                    b.HasIndex("SenderUserId");
-
                     b.HasIndex("TemplateId");
 
                     b.ToTable("NotificationHistories", (string)null);
@@ -88,7 +84,7 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TemplateType")
+                    b.HasIndex("Type", "TemplateType")
                         .IsUnique();
 
                     b.ToTable("NotificationTemplates", (string)null);
@@ -96,42 +92,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EmailAddress")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.UserSettings", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("PreferredNotificationType")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserSettings");
                 });
 
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.EmailHistory", b =>
@@ -194,18 +154,6 @@ namespace Notifications.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationHistory", b =>
                 {
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("ReceiverUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("SenderUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", "Template")
                         .WithMany("Histories")
                         .HasForeignKey("TemplateId")
@@ -215,24 +163,9 @@ namespace Notifications.Infrastructure.Persistence.Migrations
                     b.Navigation("Template");
                 });
 
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.UserSettings", b =>
-                {
-                    b.HasOne("Notifications.Infrastructure.Domain.Entities.User", null)
-                        .WithOne("UserSettings")
-                        .HasForeignKey("Notifications.Infrastructure.Domain.Entities.UserSettings", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.NotificationTemplate", b =>
                 {
                     b.Navigation("Histories");
-                });
-
-            modelBuilder.Entity("Notifications.Infrastructure.Domain.Entities.User", b =>
-                {
-                    b.Navigation("UserSettings")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
