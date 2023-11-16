@@ -1,23 +1,34 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using Notifications.Infrastructure.Application.Common.Notifications.Models;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
+using Notifications.Infrastructure.Domain.Enums;
 using Notifications.Infrastructure.Infrastrucutre.Common.Settings;
 
 namespace Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
 
 public class SmsRenderingService : ISmsRenderingService
 {
+    private readonly IValidator<SmsMessage> _smsMessageValidator;
     private readonly TemplateRenderingSettings _templateRenderingSettings;
 
-    public SmsRenderingService(IOptions<TemplateRenderingSettings> templateRenderingSettings)
+    public SmsRenderingService(
+        IOptions<TemplateRenderingSettings> templateRenderingSettings,
+        IValidator<SmsMessage> smsMessageValidator
+    )
     {
         _templateRenderingSettings = templateRenderingSettings.Value;
+        _smsMessageValidator = smsMessageValidator;
     }
 
     public ValueTask<string> RenderAsync(SmsMessage smsMessage, CancellationToken cancellationToken = default)
     {
+        var validationResult = _smsMessageValidator.Validate(smsMessage,
+            options => options.IncludeRuleSets(NotificationEvent.OnRendering.ToString()));
+        if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
+
         var placeholderRegex = new Regex(_templateRenderingSettings.PlaceholderRegexPattern,
             RegexOptions.Compiled,
             TimeSpan.FromSeconds(_templateRenderingSettings.RegexMatchTimeoutInSeconds));
@@ -54,7 +65,7 @@ public class SmsRenderingService : ISmsRenderingService
 
         var message = messageBuilder.ToString();
         smsMessage.Message = message;
-        
+
         return ValueTask.FromResult(message);
     }
 

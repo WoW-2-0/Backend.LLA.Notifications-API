@@ -1,23 +1,34 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
+using FluentValidation;
 using Microsoft.Extensions.Options;
 using Notifications.Infrastructure.Application.Common.Notifications.Models;
 using Notifications.Infrastructure.Application.Common.Notifications.Services;
+using Notifications.Infrastructure.Domain.Enums;
 using Notifications.Infrastructure.Infrastrucutre.Common.Settings;
 
 namespace Notifications.Infrastructure.Infrastrucutre.Common.Notifications.Services;
 
 public class EmailRenderingService : IEmailRenderingService
 {
+    private readonly IValidator<EmailMessage> _emailMessageValidator;
     private readonly TemplateRenderingSettings _templateRenderingSettings;
 
-    public EmailRenderingService(IOptions<TemplateRenderingSettings> templateRenderingSettings)
+    public EmailRenderingService(
+        IOptions<TemplateRenderingSettings> templateRenderingSettings,
+        IValidator<EmailMessage> emailMessageValidator
+    )
     {
         _templateRenderingSettings = templateRenderingSettings.Value;
+        _emailMessageValidator = emailMessageValidator;
     }
 
     public ValueTask<string> RenderAsync(EmailMessage emailMessage, CancellationToken cancellationToken = default)
     {
+        var validationResult = _emailMessageValidator.Validate(emailMessage,
+            options => options.IncludeRuleSets(NotificationEvent.OnRendering.ToString()));
+        if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
+
         var placeholderRegex = new Regex(_templateRenderingSettings.PlaceholderRegexPattern,
             RegexOptions.Compiled,
             TimeSpan.FromSeconds(_templateRenderingSettings.RegexMatchTimeoutInSeconds));
@@ -25,7 +36,6 @@ public class EmailRenderingService : IEmailRenderingService
         var placeholderValueRegex = new Regex(_templateRenderingSettings.PlaceholderValueRegexPattern,
             RegexOptions.Compiled,
             TimeSpan.FromSeconds(_templateRenderingSettings.RegexMatchTimeoutInSeconds));
-
 
         var matches = placeholderRegex.Matches(emailMessage.Template.Content);
 

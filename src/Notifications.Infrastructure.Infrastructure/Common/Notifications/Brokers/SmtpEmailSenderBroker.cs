@@ -23,6 +23,7 @@ public class SmtpEmailSenderBroker : IEmailSenderBroker
         var mail = new MailMessage(emailMessage.SendEmailAddress, emailMessage.ReceiverEmailAddress);
         mail.Subject = emailMessage.Subject;
         mail.Body = emailMessage.Body;
+        mail.IsBodyHtml = true;
 
         var smtpClient = new SmtpClient(_smtpEmailSenderSettings.Host, _smtpEmailSenderSettings.Port);
         smtpClient.Credentials =

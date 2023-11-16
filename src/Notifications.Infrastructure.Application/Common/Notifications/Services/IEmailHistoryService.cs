@@ -12,7 +12,7 @@ public interface IEmailHistoryService
     );
 
     ValueTask<EmailHistory> CreateAsync(
-        EmailHistory smsTemplate,
+        EmailHistory emailHistory,
         bool saveChanges = true,
         CancellationToken cancellationToken = default
     );

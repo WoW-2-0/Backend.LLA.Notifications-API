@@ -12,7 +12,7 @@ public interface ISmsHistoryService
     );
 
     ValueTask<SmsHistory> CreateAsync(
-        SmsHistory smsTemplate,
+        SmsHistory smsHistory,
         bool saveChanges = true,
         CancellationToken cancellationToken = default
     );

@@ -40,8 +40,6 @@ public class EmailOrchestrationService : IEmailOrchestrationService
         CancellationToken cancellationToken = default
     )
     {
-        // validate
-
         var sendNotificationRequest = async () =>
         {
             var message = _mapper.Map<EmailMessage>(request);
